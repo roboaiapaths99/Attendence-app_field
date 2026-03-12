@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "field_app",
+    "slug": "field_app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fieldforce.pro",
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "FieldForce Pro requires background location for kilometer tracking and visit verification.",
+        "NSLocationWhenInUseUsageDescription": "FieldForce Pro requires location for geofenced site check-ins.",
+        "NSCameraUsageDescription": "FieldForce Pro requires camera access for identity verification and site photos."
+      }
+    },
+    "android": {
+      "package": "com.fieldforce.pro",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysPermission": "Allow FieldForce Pro to track your location in the background.",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
