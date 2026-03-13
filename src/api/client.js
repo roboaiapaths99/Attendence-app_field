@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 // Use environment variable for API URL with a fallback for local dev
-const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8001';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'https://logday-api.duckdns.org';
 
 const client = axios.create({
     baseURL: API_BASE,
