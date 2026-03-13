@@ -188,7 +188,7 @@ export default function DashboardScreen({ navigation }) {
                         )}
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>FieldForce Pro Enterprise v2.0</Text>
+                            <Text style={styles.footerText}>LogDay Field Enterprise v2.0</Text>
                             <Text style={styles.orgName}>{organization?.name}</Text>
                         </View>
                     </ScrollView>

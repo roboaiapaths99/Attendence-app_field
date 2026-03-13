@@ -44,7 +44,7 @@ export default function OrganizationSelectionScreen({ navigation }) {
             >
                 <View style={styles.content}>
                     <Text style={styles.emoji}>🏢</Text>
-                    <Text style={styles.title}>FieldForce Pro</Text>
+                    <Text style={styles.title}>LogDay Field</Text>
                     <Text style={styles.subtitle}>Enter your company code to continue</Text>
 
                     <View style={styles.glassCard}>

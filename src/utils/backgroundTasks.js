@@ -14,7 +14,7 @@ export const initBackgroundLocation = async () => {
             timeInterval: 600000, // Every 10 mins
             distanceInterval: 100, // Or every 100m
             foregroundService: {
-                notificationTitle: "FieldForce Pro",
+                notificationTitle: "LogDay Field",
                 notificationBody: "Monitoring location for field safety and KM calculation.",
                 notificationColor: "#007AFF"
             }

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "field_app",
-    "slug": "field_app",
+    "name": "LogDay Field",
+    "slug": "logday-field",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,15 +14,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.fieldforce.pro",
+      "bundleIdentifier": "com.logday.field",
       "infoPlist": {
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "FieldForce Pro requires background location for kilometer tracking and visit verification.",
-        "NSLocationWhenInUseUsageDescription": "FieldForce Pro requires location for geofenced site check-ins.",
-        "NSCameraUsageDescription": "FieldForce Pro requires camera access for identity verification and site photos."
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "LogDay Field requires background location for kilometer tracking and visit verification.",
+        "NSLocationWhenInUseUsageDescription": "LogDay Field requires location for geofenced site check-ins.",
+        "NSCameraUsageDescription": "LogDay Field requires camera access for identity verification and site photos."
       }
     },
     "android": {
-      "package": "com.fieldforce.pro",
+      "package": "com.logday.field",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -40,7 +40,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysPermission": "Allow FieldForce Pro to track your location in the background.",
+          "locationAlwaysPermission": "Allow LogDay Field to track your location in the background.",
           "isAndroidBackgroundLocationEnabled": true
         }
       ]

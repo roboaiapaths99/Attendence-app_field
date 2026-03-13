@@ -61,7 +61,7 @@ export default function LoginScreen() {
                             <Text style={styles.logoEmoji}>🛡️</Text>
                         </View>
                     )}
-                    <Text style={styles.title}>{organization?.name || 'FieldForce'}</Text>
+                    <Text style={styles.title}>{organization?.name || 'LogDay'}</Text>
                     <Text style={styles.subtitle}>Sign in to your agent account</Text>
                 </View>
 
