@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import { CameraView, Camera } from 'expo-camera';
+import * as ImageManipulator from 'expo-image-manipulator';
 import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { Camera as CameraIcon, Shield, MapPin, X, RotateCcw } from 'lucide-react-native';
@@ -58,6 +59,13 @@ export default function AttendanceScreen({ route, navigation }) {
 
         setLoading(true);
         try {
+            // Optimization: Resize and Compress before sending
+            const optimized = await ImageManipulator.manipulateAsync(
+                photo.uri,
+                [{ resize: { width: 400, height: 400 } }],
+                { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+            );
+
             const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
             const isMocked = loc.mocked || false;
             const weakGps = (loc.coords.accuracy || 0) > 80;
@@ -68,7 +76,7 @@ export default function AttendanceScreen({ route, navigation }) {
                 long: loc.coords.longitude,
                 wifi_ssid: "Mobile_Data",
                 wifi_strength: -50,
-                face_image: photo.base64,
+                face_image: optimized.base64,
                 intended_type: attendanceType,
                 mock_detected: isMocked,
                 otp_used: weakGps,

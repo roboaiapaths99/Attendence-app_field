@@ -20,6 +20,7 @@ import LeaveDiscussionScreen from '../screens/LeaveDiscussionScreen';
 import SyncQueueScreen from '../screens/SyncQueueScreen';
 import LeaderboardScreen from '../screens/LeaderboardScreen';
 import ForceChangePasswordScreen from '../screens/ForceChangePasswordScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,7 @@ export default function AppNavigator() {
                         <Stack.Screen name="LeaveDiscussion" component={LeaveDiscussionScreen} />
                         <Stack.Screen name="SyncQueue" component={SyncQueueScreen} />
                         <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+                        <Stack.Screen name="History" component={HistoryScreen} />
                     </>
                 )
             ) : !organization ? (

@@ -39,8 +39,8 @@ export const getFriendlyErrorMessage = (error, defaultMsg = "Something went wron
         }
     }
 
-    if (message === "Network Error") return "No internet connection. Keeping data offline.";
-    if (message?.includes("timeout")) return "Server response slow. Please check your signal.";
+    if (message === "Network Error") return "No internet connection. Use Connectivity Diagnostics on Dashboard.";
+    if (message?.includes("timeout")) return "Server response slow. Use Connectivity Diagnostics to check signal.";
 
     return defaultMsg;
 };
