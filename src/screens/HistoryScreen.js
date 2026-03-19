@@ -72,7 +72,14 @@ export default function HistoryScreen({ navigation }) {
                 </View>
                 <View style={styles.logInfo}>
                     <View style={styles.logHeader}>
-                        <Text style={styles.logType}>{isCheckIn ? 'STARTED DAY' : 'ENDED DAY'}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            <Text style={styles.logType}>{isCheckIn ? 'STARTED DAY' : 'ENDED DAY'}</Text>
+                            {isCheckIn && item.is_late && (
+                                <View style={styles.lateBadge}>
+                                    <Text style={styles.lateBadgeText}>LATE</Text>
+                                </View>
+                            )}
+                        </View>
                         <Text style={styles.logTime}>{time}</Text>
                     </View>
                     <View style={styles.locationRow}>
@@ -194,6 +201,15 @@ const styles = StyleSheet.create({
     logInfo: { flex: 1 },
     logHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
     logType: { fontSize: 13, fontWeight: '900', color: '#f1f5f9' },
+    lateBadge: {
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(239, 68, 68, 0.2)',
+    },
+    lateBadgeText: { color: '#ef4444', fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
     logTime: { fontSize: 12, fontWeight: '700', color: '#64748b' },
     locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
     locationText: { fontSize: 12, color: '#94a3b8', fontWeight: '500', width: '85%' },

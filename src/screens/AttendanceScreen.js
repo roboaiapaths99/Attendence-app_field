@@ -35,10 +35,22 @@ export default function AttendanceScreen({ route, navigation }) {
             const { status: locStatus } = await Location.requestForegroundPermissionsAsync();
             setHasPermission(camStatus === 'granted' && locStatus === 'granted');
             if (camStatus === 'granted' && locStatus === 'granted') {
-                const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-                setLocation(loc);
-                const weakGps = (loc.coords.accuracy || 0) > 80;
-                setOtpRequired(weakGps);
+                try {
+                    // Quick fallback to last known position
+                    const lastLoc = await Location.getLastKnownPositionAsync();
+                    if (lastLoc) setLocation(lastLoc);
+
+                    // Race between fresh GPS and a 12s timeout
+                    const loc = await Promise.race([
+                        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('GPS Timeout')), 12000))
+                    ]);
+                    setLocation(loc);
+                    const weakGps = (loc.coords.accuracy || 0) > 80;
+                    setOtpRequired(weakGps);
+                } catch (err) {
+                    console.warn("[GPS] Location acquisition failed or timed out", err);
+                }
             }
         })();
     }, []);

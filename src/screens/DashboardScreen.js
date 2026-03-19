@@ -34,21 +34,32 @@ export default function DashboardScreen({ navigation }) {
     const [isWifiConnected, setIsWifiConnected] = useState(false);
     const [isGpsEnabled, setIsGpsEnabled] = useState(false);
     const [showDiagnostics, setShowDiagnostics] = useState(false);
+    const [systemSettings, setSystemSettings] = useState({
+        field_office_start_time: '--:--',
+        field_late_threshold_mins: 30,
+        field_required_hours: 9,
+        field_visits_goal: 10,
+        field_km_goal: 20
+    });
 
     const fetchDashboardData = useCallback(async () => {
         if (!user?.email) return;
 
         try {
-            const [summaryRes, planRes, logsRes] = await Promise.all([
+            const [summaryRes, planRes, logsRes, settingsRes] = await Promise.all([
                 client.get(`/api/field/summary/${user.email}`),
                 client.get(`/api/field/plan/${user.email}`),
-                client.get(`/logs/${user.email}`)
+                client.get(`/logs/${user.email}`),
+                organization?.slug ? client.get(`/settings/${organization.slug}`) : Promise.resolve({ data: null })
             ]);
             setSummary(summaryRes.data);
             setPlanStatus(planRes.data?.status || 'draft');
-            setRecentLogs(logsRes.data.slice(0, 3));
+            setRecentLogs(logsRes.data?.logs?.slice(0, 3) || []); // Fix: res.data.logs
+            if (settingsRes?.data) {
+                setSystemSettings(settingsRes.data);
+            }
         } catch (e) {
-            console.log("[DASHBOARD] Data fetch error (offline?)");
+            console.log("[DASHBOARD] Data fetch error (offline?)", e);
         }
 
         try {
@@ -201,6 +212,69 @@ export default function DashboardScreen({ navigation }) {
                                 <Text style={[styles.statValue, { color: pendingSyncCount > 0 ? '#f97316' : '#10b981' }]}>
                                     {pendingSyncCount > 0 ? `-${pendingSyncCount}` : 'OK'}
                                 </Text>
+                            </View>
+                        </View>
+
+                        {/* Dynamic Goal Section */}
+                        <View style={styles.goalSection}>
+                            <View style={styles.goalInfo}>
+                                <Clock size={16} color="#94a3b8" />
+                                <Text style={styles.goalLabel}>Shift Starts:</Text>
+                                <Text style={styles.goalValue}>{systemSettings.field_office_start_time}</Text>
+                            </View>
+                            <View style={[styles.goalBadge, { backgroundColor: `${primaryColor}15` }]}>
+                                <Text style={[styles.goalBadgeText, { color: primaryColor }]}>
+                                    Min {systemSettings.field_required_hours}h
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Progress Section */}
+                        <View style={styles.progressRow}>
+                            <View style={styles.progressCard}>
+                                <View style={styles.progressHeader}>
+                                    <View style={styles.progressIcon}>
+                                        <CheckCircle2 size={16} color={primaryColor} />
+                                    </View>
+                                    <Text style={styles.progressTitle}>Visits Goal</Text>
+                                </View>
+                                <Text style={styles.progressValue}>
+                                    {summary?.total_visits || 0} / {systemSettings.field_visits_goal || 10}
+                                </Text>
+                                <View style={styles.progressBarBg}>
+                                    <View
+                                        style={[
+                                            styles.progressBarFill,
+                                            {
+                                                width: `${Math.min(100, ((summary?.total_visits || 0) / (systemSettings.field_visits_goal || 10)) * 100)}%`,
+                                                backgroundColor: primaryColor
+                                            }
+                                        ]}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.progressCard}>
+                                <View style={styles.progressHeader}>
+                                    <View style={[styles.progressIcon, { backgroundColor: 'rgba(56, 189, 248, 0.1)' }]}>
+                                        <Route size={16} color="#38bdf8" />
+                                    </View>
+                                    <Text style={styles.progressTitle}>Distance Goal</Text>
+                                </View>
+                                <Text style={styles.progressValue}>
+                                    {summary?.total_km || 0} / {systemSettings.field_km_goal || 20} km
+                                </Text>
+                                <View style={styles.progressBarBg}>
+                                    <View
+                                        style={[
+                                            styles.progressBarFill,
+                                            {
+                                                width: `${Math.min(100, ((summary?.total_km || 0) / (systemSettings.field_km_goal || 20)) * 100)}%`,
+                                                backgroundColor: '#38bdf8'
+                                            }
+                                        ]}
+                                    />
+                                </View>
                             </View>
                         </View>
 
@@ -384,6 +458,23 @@ const styles = StyleSheet.create({
     divider: { width: 1, height: '40%', backgroundColor: 'rgba(255, 255, 255, 0.1)' },
     statLabel: { fontSize: 11, fontWeight: '700', color: '#64748b', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
     statValue: { fontSize: 20, fontWeight: '900' },
+    goalSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'rgba(30, 41, 59, 0.4)',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 20,
+        marginBottom: 24,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+    },
+    goalInfo: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    goalLabel: { fontSize: 12, color: '#64748b', fontWeight: '600' },
+    goalValue: { fontSize: 13, color: '#f1f5f9', fontWeight: '800' },
+    goalBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+    goalBadgeText: { fontSize: 11, fontWeight: '800' },
     sectionTitle: { fontSize: 13, fontWeight: '800', color: '#64748b', marginBottom: 20, textTransform: 'uppercase', letterSpacing: 2 },
     glassCard: {
         backgroundColor: 'rgba(30, 41, 59, 0.4)',
@@ -412,5 +503,57 @@ const styles = StyleSheet.create({
     logTypeIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
     logLabel: { color: '#f8fafc', fontSize: 13, fontWeight: '600' },
     logSubText: { color: '#64748b', fontSize: 11, marginTop: 2 },
-    emptyText: { color: '#475569', fontSize: 12, textAlign: 'center', marginVertical: 20 }
+    emptyText: { color: '#475569', fontSize: 12, textAlign: 'center', marginVertical: 20 },
+
+    // Progress Section Styles
+    progressRow: {
+        flexDirection: 'row',
+        gap: 12,
+        marginBottom: 30
+    },
+    progressCard: {
+        flex: 1,
+        backgroundColor: 'rgba(30, 41, 59, 0.4)',
+        borderRadius: 22,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)'
+    },
+    progressHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+        gap: 8
+    },
+    progressIcon: {
+        width: 28,
+        height: 28,
+        borderRadius: 10,
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    progressTitle: {
+        fontSize: 10,
+        fontWeight: '800',
+        color: '#94a3b8',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5
+    },
+    progressValue: {
+        fontSize: 14,
+        fontWeight: '900',
+        color: '#f8fafc',
+        marginBottom: 8
+    },
+    progressBarBg: {
+        height: 6,
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: 3,
+        overflow: 'hidden'
+    },
+    progressBarFill: {
+        height: '100%',
+        borderRadius: 3
+    }
 });
