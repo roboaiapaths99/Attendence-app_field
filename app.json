@@ -43,6 +43,15 @@
           "locationAlwaysPermission": "Allow LogDay Field to track your location in the background.",
           "isAndroidBackgroundLocationEnabled": true
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "gradleVersion": "8.8",
+            "agpVersion": "8.5.2"
+          }
+        }
       ]
     ],
     "web": {
