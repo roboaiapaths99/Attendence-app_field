@@ -32,6 +32,7 @@ export default function ActiveVisitsScreen({ navigation }) {
 
     // Media state
     const [sitePhoto, setSitePhoto] = useState(null);
+    const [selfie, setSelfie] = useState(null);
     const [voiceNoteBase64, setVoiceNoteBase64] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
@@ -85,6 +86,22 @@ export default function ActiveVisitsScreen({ navigation }) {
     };
 
     // -------- PHOTO CAPTURE --------
+    const pickSelfie = async () => {
+        try {
+            const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: false,
+                quality: 0.5,
+                base64: true,
+            });
+            if (!result.canceled) {
+                setSelfie(result.assets[0].base64);
+            }
+        } catch (e) {
+            Alert.alert('Error', 'Camera not available');
+        }
+    };
+
     const pickSitePhoto = async () => {
         try {
             const result = await ImagePicker.launchCameraAsync({
@@ -142,6 +159,7 @@ export default function ActiveVisitsScreen({ navigation }) {
                 person_met_name: personMet || undefined,
                 person_met_role: roleMet || undefined,
                 site_photo_base64: sitePhoto || undefined,
+                selfie_base64: selfie || undefined,
                 voice_note_base64: voiceNoteBase64 !== 'VOICE_NOTE_RECORDED' ? voiceNoteBase64 : undefined,
             });
 
@@ -166,6 +184,7 @@ export default function ActiveVisitsScreen({ navigation }) {
         setLeadCaptured(false);
         setLeadDetails('');
         setSitePhoto(null);
+        setSelfie(null);
         setVoiceNoteBase64(null);
         setIsRecording(false);
         setRecordingDuration(0);
@@ -306,12 +325,22 @@ export default function ActiveVisitsScreen({ navigation }) {
                             <Text style={styles.sectionLabel}>Attachments</Text>
                             <View style={styles.mediaRow}>
                                 <TouchableOpacity
+                                    style={[styles.mediaBtn, selfie && styles.mediaBtnActive]}
+                                    onPress={pickSelfie}
+                                >
+                                    <User color={selfie ? "#34C759" : "#94a3b8"} size={20} />
+                                    <Text style={[styles.mediaBtnText, selfie && { color: '#34C759' }]}>
+                                        {selfie ? 'Selfie ✓' : 'Selfie'}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
                                     style={[styles.mediaBtn, sitePhoto && styles.mediaBtnActive]}
                                     onPress={pickSitePhoto}
                                 >
                                     <Camera color={sitePhoto ? "#34C759" : "#94a3b8"} size={20} />
                                     <Text style={[styles.mediaBtnText, sitePhoto && { color: '#34C759' }]}>
-                                        {sitePhoto ? 'Photo ✓' : 'Site Photo'}
+                                        {sitePhoto ? 'Site photo ✓' : 'Site photo'}
                                     </Text>
                                 </TouchableOpacity>
 
@@ -321,7 +350,7 @@ export default function ActiveVisitsScreen({ navigation }) {
                                 >
                                     {isRecording ? <MicOff color="#ef4444" size={20} /> : <Mic color={voiceNoteBase64 ? "#34C759" : "#94a3b8"} size={20} />}
                                     <Text style={[styles.mediaBtnText, isRecording && { color: '#ef4444' }, voiceNoteBase64 && { color: '#34C759' }]}>
-                                        {isRecording ? `${recordingDuration}s ■ Stop` : voiceNoteBase64 ? 'Voice ✓' : 'Voice Note'}
+                                        {isRecording ? `${recordingDuration}s ■` : voiceNoteBase64 ? 'Voice ✓' : 'Voice'}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

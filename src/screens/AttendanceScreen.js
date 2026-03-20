@@ -88,7 +88,7 @@ export default function AttendanceScreen({ route, navigation }) {
                 long: loc.coords.longitude,
                 wifi_ssid: "Mobile_Data",
                 wifi_strength: -50,
-                face_image: optimized.base64,
+                image: optimized.base64,
                 intended_type: attendanceType,
                 mock_detected: isMocked,
                 otp_used: weakGps,
